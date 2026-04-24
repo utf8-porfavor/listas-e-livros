@@ -6,7 +6,7 @@ from app.database import Base
 class Lista(Base):
     __tablename__ = "listas"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     titulo = Column(String(255), nullable=False)
     fonte = Column(String(255), nullable=True)
     ano = Column(Integer, nullable=True)

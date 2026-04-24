@@ -6,7 +6,7 @@ from app.database import Base
 class Livro(Base):
     __tablename__ = "livros"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     titulo = Column(String(255), nullable=False)
     subtitulo = Column(String(255), nullable=True)
     autor_id = Column(Integer, ForeignKey("autores.id"), nullable=False)

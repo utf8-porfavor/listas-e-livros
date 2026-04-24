@@ -6,7 +6,7 @@ from app.database import Base
 class Premio(Base):
     __tablename__ = "premios"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     nome = Column(String(255), nullable=False)
     descricao = Column(Text, nullable=True)
     tipo = Column(String(50), nullable=False)  # "livro" ou "autor"
@@ -17,7 +17,7 @@ class Premio(Base):
 class EdicaoPremio(Base):
     __tablename__ = "edicoes_premio"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     premio_id = Column(Integer, ForeignKey("premios.id"), nullable=False)
     ano = Column(Integer, nullable=False)
     descricao = Column(Text, nullable=True)
@@ -30,7 +30,7 @@ class EdicaoPremio(Base):
 class CategoriaPremio(Base):
     __tablename__ = "categorias_premio"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     edicao_id = Column(Integer, ForeignKey("edicoes_premio.id"), nullable=False)
     nome = Column(String(255), nullable=False)
 

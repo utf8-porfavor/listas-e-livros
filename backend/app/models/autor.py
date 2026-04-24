@@ -6,7 +6,7 @@ from app.database import Base
 class Autor(Base):
     __tablename__ = "autores"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     nome = Column(String(255), nullable=False)
     biografia = Column(Text, nullable=True)
     foto_url = Column(String(500), nullable=True)
