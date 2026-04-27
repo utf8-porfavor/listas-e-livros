@@ -18,6 +18,7 @@ class Livro(Base):
     capa_url = Column(String(500), nullable=True)
     link_afiliado = Column(String(500), nullable=True)
     short_url = Column(String(100), nullable=True)
+    tradutor = Column(String(255), nullable=True)
     ativo = Column(Integer, default=1)
 
     autor = relationship("Autor", back_populates="livros")
