@@ -28,9 +28,16 @@ class LivroUpdate(LivroBase):
     autor_id: Optional[int] = None
 
 
+class AutorResumido(BaseModel):
+    id: int
+    nome: str
+
+    class Config:
+        from_attributes = True
+
 class LivroResponse(LivroBase):
     id: int
-    autor: Optional[str] = None
+    autor: Optional[AutorResumido] = None
 
     class Config:
         from_attributes = True
