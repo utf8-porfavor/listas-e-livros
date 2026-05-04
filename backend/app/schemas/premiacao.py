@@ -55,10 +55,8 @@ class CategoriaPremioCreate(CategoriaPremioBase):
     pass
 
 
-class CategoriaPremioUpdate(CategoriaPremioBase):
-    edicao_id: Optional[int] = None
+class CategoriaPremioUpdate(BaseModel):
     nome: Optional[str] = None
-
 
 class CategoriaPremioResponse(CategoriaPremioBase):
     id: int
