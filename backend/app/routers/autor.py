@@ -4,6 +4,7 @@ from app.database import get_db
 from app.models.autor import Autor
 from app.schemas.autor import AutorCreate, AutorUpdate, AutorResponse
 from typing import List
+from app.auth import verificar_token
 
 router = APIRouter()
 
@@ -22,7 +23,7 @@ def buscar_autor(id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=AutorResponse, status_code=201)
-def criar_autor(autor: AutorCreate, db: Session = Depends(get_db)):
+def criar_autor(autor: AutorCreate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     novo_autor = Autor(**autor.model_dump())
     db.add(novo_autor)
     db.commit()
@@ -31,7 +32,7 @@ def criar_autor(autor: AutorCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{id}", response_model=AutorResponse)
-def atualizar_autor(id: int, dados: AutorUpdate, db: Session = Depends(get_db)):
+def atualizar_autor(id: int, dados: AutorUpdate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     autor = db.query(Autor).filter(Autor.id == id).first()
     if not autor:
         raise HTTPException(status_code=404, detail="Autor não encontrado")
@@ -43,7 +44,7 @@ def atualizar_autor(id: int, dados: AutorUpdate, db: Session = Depends(get_db)):
 
 
 @router.delete("/{id}", status_code=204)
-def deletar_autor(id: int, db: Session = Depends(get_db)):
+def deletar_autor(id: int, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     autor = db.query(Autor).filter(Autor.id == id).first()
     if not autor:
         raise HTTPException(status_code=404, detail="Autor não encontrado")

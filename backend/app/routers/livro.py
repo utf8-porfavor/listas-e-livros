@@ -4,6 +4,7 @@ from app.database import get_db
 from app.models.livro import Livro
 from app.schemas.livro import LivroCreate, LivroUpdate, LivroResponse
 from typing import List
+from app.auth import verificar_token
 
 router = APIRouter()
 
@@ -22,7 +23,7 @@ def buscar_livro(id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=LivroResponse, status_code=201)
-def criar_livro(livro: LivroCreate, db: Session = Depends(get_db)):
+def criar_livro(livro: LivroCreate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     novo_livro = Livro(**livro.model_dump())
     db.add(novo_livro)
     db.commit()
@@ -31,7 +32,7 @@ def criar_livro(livro: LivroCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{id}", response_model=LivroResponse)
-def atualizar_livro(id: int, dados: LivroUpdate, db: Session = Depends(get_db)):
+def atualizar_livro(id: int, dados: LivroUpdate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     livro = db.query(Livro).filter(Livro.id == id).first()
     if not livro:
         raise HTTPException(status_code=404, detail="Livro não encontrado")
@@ -43,7 +44,7 @@ def atualizar_livro(id: int, dados: LivroUpdate, db: Session = Depends(get_db)):
 
 
 @router.delete("/{id}", status_code=204)
-def deletar_livro(id: int, db: Session = Depends(get_db)):
+def deletar_livro(id: int, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     livro = db.query(Livro).filter(Livro.id == id).first()
     if not livro:
         raise HTTPException(status_code=404, detail="Livro não encontrado")

@@ -7,6 +7,7 @@ from app.schemas.lista import (
     LivroListaCreate, LivroListaUpdate, LivroListaResponse
 )
 from typing import List
+from app.auth import verificar_token
 
 router = APIRouter()
 
@@ -27,7 +28,7 @@ def buscar_lista(id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=ListaResponse, status_code=201)
-def criar_lista(lista: ListaCreate, db: Session = Depends(get_db)):
+def criar_lista(lista: ListaCreate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     nova = Lista(**lista.model_dump())
     db.add(nova)
     db.commit()
@@ -36,7 +37,7 @@ def criar_lista(lista: ListaCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{id}", response_model=ListaResponse)
-def atualizar_lista(id: int, dados: ListaUpdate, db: Session = Depends(get_db)):
+def atualizar_lista(id: int, dados: ListaUpdate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     lista = db.query(Lista).filter(Lista.id == id).first()
     if not lista:
         raise HTTPException(status_code=404, detail="Lista não encontrada")
@@ -48,7 +49,7 @@ def atualizar_lista(id: int, dados: ListaUpdate, db: Session = Depends(get_db)):
 
 
 @router.delete("/{id}", status_code=204)
-def deletar_lista(id: int, db: Session = Depends(get_db)):
+def deletar_lista(id: int, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     lista = db.query(Lista).filter(Lista.id == id).first()
     if not lista:
         raise HTTPException(status_code=404, detail="Lista não encontrada")
@@ -64,7 +65,7 @@ def listar_livros_da_lista(lista_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/{lista_id}/livros", response_model=LivroListaResponse, status_code=201)
-def adicionar_livro_lista(lista_id: int, dados: LivroListaCreate, db: Session = Depends(get_db)):
+def adicionar_livro_lista(lista_id: int, dados: LivroListaCreate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     novo = LivroLista(**dados.model_dump())
     db.add(novo)
     db.commit()
@@ -72,7 +73,7 @@ def adicionar_livro_lista(lista_id: int, dados: LivroListaCreate, db: Session = 
 
 
 @router.put("/{lista_id}/livros/{livro_id}", response_model=LivroListaResponse)
-def atualizar_livro_lista(lista_id: int, livro_id: int, dados: LivroListaUpdate, db: Session = Depends(get_db)):
+def atualizar_livro_lista(lista_id: int, livro_id: int, dados: LivroListaUpdate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     livro_lista = db.query(LivroLista).filter(
         LivroLista.lista_id == lista_id,
         LivroLista.livro_id == livro_id
@@ -86,7 +87,7 @@ def atualizar_livro_lista(lista_id: int, livro_id: int, dados: LivroListaUpdate,
 
 
 @router.delete("/{lista_id}/livros/{livro_id}", status_code=204)
-def remover_livro_lista(lista_id: int, livro_id: int, db: Session = Depends(get_db)):
+def remover_livro_lista(lista_id: int, livro_id: int, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     livro_lista = db.query(LivroLista).filter(
         LivroLista.lista_id == lista_id,
         LivroLista.livro_id == livro_id
