@@ -10,7 +10,7 @@ from app.schemas.premiacao import (
     AutorPremioCreate, AutorPremioUpdate, AutorPremioResponse
 )
 from typing import List
-
+from app.auth import verificar_token
 router = APIRouter()
 
 
@@ -30,7 +30,7 @@ def buscar_premio(id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=PremioResponse, status_code=201)
-def criar_premio(premio: PremioCreate, db: Session = Depends(get_db)):
+def criar_premio(premio: PremioCreate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     novo = Premio(**premio.model_dump())
     db.add(novo)
     db.commit()
@@ -39,7 +39,7 @@ def criar_premio(premio: PremioCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{id}", response_model=PremioResponse)
-def atualizar_premio(id: int, dados: PremioUpdate, db: Session = Depends(get_db)):
+def atualizar_premio(id: int, dados: PremioUpdate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     premio = db.query(Premio).filter(Premio.id == id).first()
     if not premio:
         raise HTTPException(status_code=404, detail="Prêmio não encontrado")
@@ -51,7 +51,7 @@ def atualizar_premio(id: int, dados: PremioUpdate, db: Session = Depends(get_db)
 
 
 @router.delete("/{id}", status_code=204)
-def deletar_premio(id: int, db: Session = Depends(get_db)):
+def deletar_premio(id: int, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     premio = db.query(Premio).filter(Premio.id == id).first()
     if not premio:
         raise HTTPException(status_code=404, detail="Prêmio não encontrado")
@@ -67,7 +67,7 @@ def listar_edicoes(premio_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/{premio_id}/edicoes", response_model=EdicaoPremioResponse, status_code=201)
-def criar_edicao(premio_id: int, edicao: EdicaoPremioCreate, db: Session = Depends(get_db)):
+def criar_edicao(premio_id: int, edicao: EdicaoPremioCreate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     nova = EdicaoPremio(**edicao.model_dump())
     db.add(nova)
     db.commit()
@@ -76,7 +76,7 @@ def criar_edicao(premio_id: int, edicao: EdicaoPremioCreate, db: Session = Depen
 
 
 @router.put("/edicoes/{id}", response_model=EdicaoPremioResponse)
-def atualizar_edicao(id: int, dados: EdicaoPremioUpdate, db: Session = Depends(get_db)):
+def atualizar_edicao(id: int, dados: EdicaoPremioUpdate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     edicao = db.query(EdicaoPremio).filter(EdicaoPremio.id == id).first()
     if not edicao:
         raise HTTPException(status_code=404, detail="Edição não encontrada")
@@ -88,7 +88,7 @@ def atualizar_edicao(id: int, dados: EdicaoPremioUpdate, db: Session = Depends(g
 
 
 @router.delete("/edicoes/{id}", status_code=204)
-def deletar_edicao(id: int, db: Session = Depends(get_db)):
+def deletar_edicao(id: int, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     edicao = db.query(EdicaoPremio).filter(EdicaoPremio.id == id).first()
     if not edicao:
         raise HTTPException(status_code=404, detail="Edição não encontrada")
@@ -104,7 +104,7 @@ def listar_categorias(edicao_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/edicoes/{edicao_id}/categorias", response_model=CategoriaPremioResponse, status_code=201)
-def criar_categoria(edicao_id: int, categoria: CategoriaPremioCreate, db: Session = Depends(get_db)):
+def criar_categoria(edicao_id: int, categoria: CategoriaPremioCreate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     nova = CategoriaPremio(**categoria.model_dump())
     db.add(nova)
     db.commit()
@@ -113,7 +113,7 @@ def criar_categoria(edicao_id: int, categoria: CategoriaPremioCreate, db: Sessio
 
 
 @router.put("/edicoes/{edicao_id}/categorias/{id}", response_model=CategoriaPremioResponse)
-def atualizar_categoria(edicao_id: int, id: int, dados: CategoriaPremioUpdate, db: Session = Depends(get_db)):
+def atualizar_categoria(edicao_id: int, id: int, dados: CategoriaPremioUpdate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     categoria = db.query(CategoriaPremio).filter(
         CategoriaPremio.id == id,
         CategoriaPremio.edicao_id == edicao_id
@@ -128,7 +128,7 @@ def atualizar_categoria(edicao_id: int, id: int, dados: CategoriaPremioUpdate, d
 
 
 @router.delete("/edicoes/{edicao_id}/categorias/{id}", status_code=204)
-def deletar_categoria(edicao_id: int, id: int, db: Session = Depends(get_db)):
+def deletar_categoria(edicao_id: int, id: int, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     categoria = db.query(CategoriaPremio).filter(
         CategoriaPremio.id == id,
         CategoriaPremio.edicao_id == edicao_id
@@ -141,7 +141,7 @@ def deletar_categoria(edicao_id: int, id: int, db: Session = Depends(get_db)):
 # --- LivroCategoria ---
 
 @router.post("/categorias/{categoria_id}/livros", response_model=LivroCategoriaResponse, status_code=201)
-def adicionar_livro_categoria(categoria_id: int, dados: LivroCategoriaCreate, db: Session = Depends(get_db)):
+def adicionar_livro_categoria(categoria_id: int, dados: LivroCategoriaCreate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     novo = LivroCategoria(**dados.model_dump())
     db.add(novo)
     db.commit()
@@ -149,7 +149,7 @@ def adicionar_livro_categoria(categoria_id: int, dados: LivroCategoriaCreate, db
 
 
 @router.delete("/categorias/{categoria_id}/livros/{livro_id}", status_code=204)
-def remover_livro_categoria(categoria_id: int, livro_id: int, db: Session = Depends(get_db)):
+def remover_livro_categoria(categoria_id: int, livro_id: int, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     livro_cat = db.query(LivroCategoria).filter(
         LivroCategoria.categoria_id == categoria_id,
         LivroCategoria.livro_id == livro_id
@@ -163,7 +163,7 @@ def remover_livro_categoria(categoria_id: int, livro_id: int, db: Session = Depe
 # --- AutorPremio ---
 
 @router.post("/edicoes/{edicao_id}/autores", response_model=AutorPremioResponse, status_code=201)
-def adicionar_autor_premio(edicao_id: int, dados: AutorPremioCreate, db: Session = Depends(get_db)):
+def adicionar_autor_premio(edicao_id: int, dados: AutorPremioCreate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     novo = AutorPremio(**dados.model_dump())
     db.add(novo)
     db.commit()
@@ -171,7 +171,7 @@ def adicionar_autor_premio(edicao_id: int, dados: AutorPremioCreate, db: Session
 
 
 @router.delete("/edicoes/{edicao_id}/autores/{autor_id}", status_code=204)
-def remover_autor_premio(edicao_id: int, autor_id: int, db: Session = Depends(get_db)):
+def remover_autor_premio(edicao_id: int, autor_id: int, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
     autor_premio = db.query(AutorPremio).filter(
         AutorPremio.edicao_id == edicao_id,
         AutorPremio.autor_id == autor_id
