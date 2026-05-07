@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 
@@ -20,8 +20,7 @@ class PremioUpdate(PremioBase):
 class PremioResponse(PremioBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class EdicaoPremioBase(BaseModel):
@@ -42,8 +41,7 @@ class EdicaoPremioUpdate(EdicaoPremioBase):
 class EdicaoPremioResponse(EdicaoPremioBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CategoriaPremioBase(BaseModel):
@@ -61,8 +59,7 @@ class CategoriaPremioUpdate(BaseModel):
 class CategoriaPremioResponse(CategoriaPremioBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class LivroCategoriaBase(BaseModel):
@@ -80,8 +77,7 @@ class LivroCategoriaUpdate(BaseModel):
 
 
 class LivroCategoriaResponse(LivroCategoriaBase):
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AutorPremioBase(BaseModel):
@@ -99,5 +95,4 @@ class AutorPremioUpdate(BaseModel):
 
 
 class AutorPremioResponse(AutorPremioBase):
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
