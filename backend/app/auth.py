@@ -1,32 +1,29 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
+import bcrypt
+import os
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
-from app.database import get_db
-import os
 
 SECRET_KEY = os.getenv("SECRET_KEY", "chave-local-desenvolvimento")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def verificar_senha(senha_plana: str, senha_hash: str) -> bool:
-    return pwd_context.verify(senha_plana, senha_hash)
+    return bcrypt.checkpw(senha_plana.encode(), senha_hash.encode())
 
 
 def gerar_hash_senha(senha: str) -> str:
-    return pwd_context.hash(senha)
+    return bcrypt.hashpw(senha.encode(), bcrypt.gensalt()).decode()
 
 
 def criar_token(dados: dict, expira_em: Optional[timedelta] = None) -> str:
     payload = dados.copy()
-    expiracao = datetime.utcnow() + (expira_em or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    expiracao = datetime.now(timezone.utc) + (expira_em or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     payload.update({"exp": expiracao})
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
