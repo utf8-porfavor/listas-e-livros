@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 
@@ -20,9 +20,7 @@ class ListaUpdate(ListaBase):
 class ListaResponse(ListaBase):
     id: int
 
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
 
 class LivroListaBase(BaseModel):
     livro_id: int
@@ -41,5 +39,4 @@ class LivroListaUpdate(BaseModel):
 
 
 class LivroListaResponse(LivroListaBase):
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
