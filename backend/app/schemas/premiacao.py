@@ -6,6 +6,8 @@ class PremioBase(BaseModel):
     nome: str
     descricao: Optional[str] = None
     tipo: str  # "livro" ou "autor"
+    destaque: Optional[int] = 0
+    ordem_destaque: Optional[int] = 0
 
 
 class PremioCreate(PremioBase):

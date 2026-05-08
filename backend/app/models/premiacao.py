@@ -10,6 +10,8 @@ class Premio(Base):
     nome = Column(String(255), nullable=False)
     descricao = Column(Text, nullable=True)
     tipo = Column(String(50), nullable=False)  # "livro" ou "autor"
+    destaque = Column(Integer, default=0)
+    ordem_destaque = Column(Integer, default=0)
 
     edicoes = relationship("EdicaoPremio", back_populates="premio")
 
