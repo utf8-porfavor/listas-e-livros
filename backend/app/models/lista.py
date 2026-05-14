@@ -11,6 +11,8 @@ class Lista(Base):
     fonte = Column(String(255), nullable=True)
     ano = Column(Integer, nullable=True)
     descricao = Column(Text, nullable=True)
+    destaque = Column(Integer, default=0)
+    ordem_destaque = Column(Integer, default=0)
 
     livros = relationship("LivroLista", back_populates="lista")
 

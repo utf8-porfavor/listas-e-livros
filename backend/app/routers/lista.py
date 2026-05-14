@@ -19,6 +19,12 @@ def listar_listas(db: Session = Depends(get_db)):
     return db.query(Lista).all()
 
 
+@router.get("/destaque", response_model=List[ListaResponse])
+def listas_em_destaque(db: Session = Depends(get_db)):
+    return db.query(Lista).filter(
+        Lista.destaque == 1
+    ).order_by(Lista.ordem_destaque).limit(3).all()
+
 @router.get("/{id}", response_model=ListaResponse)
 def buscar_lista(id: int, db: Session = Depends(get_db)):
     lista = db.query(Lista).filter(Lista.id == id).first()
@@ -96,3 +102,4 @@ def remover_livro_lista(lista_id: int, livro_id: int, db: Session = Depends(get_
         raise HTTPException(status_code=404, detail="Relação não encontrada")
     db.delete(livro_lista)
     db.commit()
+

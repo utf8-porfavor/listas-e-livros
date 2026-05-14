@@ -7,6 +7,8 @@ class ListaBase(BaseModel):
     fonte: Optional[str] = None
     ano: Optional[int] = None
     descricao: Optional[str] = None
+    destaque: Optional[int] = 0
+    ordem_destaque: Optional[int] = 0
 
 
 class ListaCreate(ListaBase):

@@ -9,6 +9,7 @@ from app.schemas.premiacao import (
     LivroCategoriaCreate, LivroCategoriaUpdate, LivroCategoriaResponse,
     AutorPremioCreate, AutorPremioUpdate, AutorPremioResponse
 )
+from app.schemas.livro import LivroResponse
 from typing import List
 from app.auth import verificar_token
 router = APIRouter()
@@ -20,6 +21,11 @@ router = APIRouter()
 def listar_premios(db: Session = Depends(get_db)):
     return db.query(Premio).all()
 
+@router.get("/destaque", response_model=List[PremioResponse])
+def premios_em_destaque(db: Session = Depends(get_db)):
+    return db.query(Premio).filter(
+        Premio.destaque == 1
+    ).order_by(Premio.ordem_destaque).limit(3).all()
 
 @router.get("/{id}", response_model=PremioResponse)
 def buscar_premio(id: int, db: Session = Depends(get_db)):
@@ -139,6 +145,11 @@ def deletar_categoria(edicao_id: int, id: int, db: Session = Depends(get_db), us
     db.commit()
 
 # --- LivroCategoria ---
+@router.get("/categorias/{categoria_id}/livros", response_model=List[LivroCategoriaResponse])
+def listar_livros_por_categoria(categoria_id: int, db: Session = Depends(get_db)):
+    return db.query(LivroCategoria).filter(
+        LivroCategoria.categoria_id == categoria_id
+    ).all()
 
 @router.post("/categorias/{categoria_id}/livros", response_model=LivroCategoriaResponse, status_code=201)
 def adicionar_livro_categoria(categoria_id: int, dados: LivroCategoriaCreate, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
@@ -147,6 +158,14 @@ def adicionar_livro_categoria(categoria_id: int, dados: LivroCategoriaCreate, db
     db.commit()
     return novo
 
+@router.get("/categorias/{categoria_id}/livros/detalhes", response_model=List[LivroResponse])
+def listar_livros_detalhes_por_categoria(categoria_id: int, db: Session = Depends(get_db)):
+    from app.models.livro import Livro
+    return db.query(Livro).join(
+        LivroCategoria, Livro.id == LivroCategoria.livro_id
+    ).filter(
+        LivroCategoria.categoria_id == categoria_id
+    ).all()
 
 @router.delete("/categorias/{categoria_id}/livros/{livro_id}", status_code=204)
 def remover_livro_categoria(categoria_id: int, livro_id: int, db: Session = Depends(get_db), usuario: str = Depends(verificar_token)):
@@ -180,3 +199,5 @@ def remover_autor_premio(edicao_id: int, autor_id: int, db: Session = Depends(ge
         raise HTTPException(status_code=404, detail="Relação não encontrada")
     db.delete(autor_premio)
     db.commit()
+
+
