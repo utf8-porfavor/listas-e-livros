@@ -18,9 +18,11 @@ async function request(path, options = {}) {
   return resposta.json()
 }
 
+
 export const livros = {
   listar: () => request('/livros/'),
   buscar: (id) => request(`/livros/${id}`),
+  listarPorCategoria: (categoriaId) => request(`/premios/categorias/${categoriaId}/livros/detalhes`),
 }
 
 export const autores = {
@@ -33,10 +35,13 @@ export const premios = {
   buscar: (id) => request(`/premios/${id}`),
   listarEdicoes: (premioId) => request(`/premios/${premioId}/edicoes`),
   listarCategorias: (edicaoId) => request(`/premios/edicoes/${edicaoId}/categorias`),
+  destaque: () => request('/premios/destaque'),
 }
 
 export const listas = {
   listar: () => request('/listas/'),
   buscar: (id) => request(`/listas/${id}`),
   listarLivros: (listaId) => request(`/listas/${listaId}/livros`),
+  destaque: () => request('/listas/destaque'),
 }
+
